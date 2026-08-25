@@ -5,10 +5,13 @@ Mosaic is a fullscreen tiled desktop browser. It has no tab strip and no artific
 ## Interaction model
 
 - Click a tile to expand it over the workspace.
-- Use the rounded-square control in the bottom-right corner, or press **Esc**, to return the page to its exact grid position.
-- Use the floating **+** control or **Cmd/Ctrl+T** to add another page. Links that request a new window also become new tiles.
+- Use the grid control in the bottom-right corner, or press **Esc**, to return the page to its exact grid position.
+- Use the toolbar **+** control or **Cmd/Ctrl+T** to add another page. Links that request a new window also become new tiles.
 - Use **Cmd/Ctrl+W** to close the active page and **Cmd/Ctrl+L** to focus its address bar.
-- Use the floating fullscreen control or **F11** to toggle operating-system fullscreen.
+- Right-click the toolbar **×** and confirm to close Mosaic and every open tab.
+- Use **F11** to toggle operating-system fullscreen.
+
+The browser chrome follows the operating system light or dark appearance automatically.
 
 ## Run locally
 

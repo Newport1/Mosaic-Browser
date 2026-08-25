@@ -12,7 +12,7 @@ const {
 
 test('one tile fills the grid workspace', () => {
   assert.deepEqual(calculateTiles({ width: 1000, height: 700 }, 1), [
-    { x: 6, y: 62, width: 988, height: 632 }
+    { x: 6, y: 54, width: 988, height: 640 }
   ]);
 });
 
@@ -57,6 +57,6 @@ test('focus fills the workspace and restore returns the exact grid geometry', ()
 });
 
 test('narrow windows use compact chrome geometry', () => {
-  assert.equal(getToolbarHeight(500), 38);
-  assert.equal(calculateTiles({ width: 500, height: 700 }, 1)[0].y, 44);
+  assert.equal(getToolbarHeight(500), 42);
+  assert.equal(calculateTiles({ width: 500, height: 700 }, 1)[0].y, 48);
 });

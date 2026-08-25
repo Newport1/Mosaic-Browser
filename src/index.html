@@ -7,20 +7,35 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="chrome">
-    <div class="brand" aria-label="Mosaic"><span class="mark">M</span><strong>Mosaic</strong></div>
-    <nav class="controls" aria-label="Page navigation">
-      <button id="back" type="button" aria-label="Back">←</button>
-      <button id="forward" type="button" aria-label="Forward">→</button>
-      <button id="reload" type="button" aria-label="Reload">↻</button>
+  <header class="browser-toolbar">
+    <nav class="navigation-controls" aria-label="Page navigation">
+      <button class="icon-button" id="back" type="button" aria-label="Back" title="Back">
+        <svg aria-hidden="true"><use href="icons.svg#arrow-left"></use></svg>
+      </button>
+      <button class="icon-button" id="forward" type="button" aria-label="Forward" title="Forward">
+        <svg aria-hidden="true"><use href="icons.svg#arrow-right"></use></svg>
+      </button>
+      <button class="icon-button" id="reload" type="button" aria-label="Reload" title="Reload">
+        <svg aria-hidden="true"><use id="reloadIcon" href="icons.svg#rotate-cw"></use></svg>
+      </button>
     </nav>
-    <form id="addressForm">
-      <span class="secure" aria-hidden="true">●</span>
-      <input id="address" aria-label="Address" autocomplete="off" spellcheck="false" placeholder="Search or enter an address">
-      <kbd>⌘ L</kbd>
+
+    <form id="addressForm" class="address-bar">
+      <svg class="site-controls-icon" aria-hidden="true"><use href="icons.svg#search"></use></svg>
+      <input id="address" aria-label="Address and search" autocomplete="off" autocapitalize="off"
+        spellcheck="false" placeholder="Search or enter address">
     </form>
-    <span class="count" id="count" aria-live="polite">1 page</span>
-    <button class="close" id="close" type="button" aria-label="Close active page">×</button>
+
+    <div class="window-controls" aria-label="Window and tab controls">
+      <button class="icon-button" id="add" type="button" aria-label="New tab" title="New tab">
+        <svg aria-hidden="true"><use href="icons.svg#plus"></use></svg>
+      </button>
+      <span class="tab-count" id="count" aria-live="polite" title="1 tab open">1</span>
+      <button class="icon-button close-button" id="close" type="button" aria-label="Close tab"
+        title="Close tab · Right-click to close Mosaic">
+        <svg aria-hidden="true"><use href="icons.svg#x"></use></svg>
+      </button>
+    </div>
   </header>
   <main aria-hidden="true"></main>
   <script src="renderer.js"></script>

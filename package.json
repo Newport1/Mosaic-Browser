@@ -8,22 +8,36 @@
     "start": "electron .",
     "start:windowed": "electron . --windowed",
     "test": "node --test",
-    "check": "node --check src/main.js && node --check src/preload.js && node --check src/tile-preload.js && node --check src/renderer.js && node --check src/controls.js && node --check src/layout.js && node --check src/navigation.js",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/tile-preload.js && node --check src/renderer.js && node --check src/controls.js && node --check src/close-prompt.js && node --check src/layout.js && node --check src/navigation.js",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "dist:mac": "electron-builder --mac dmg zip --publish never",
     "dist:win": "electron-builder --win nsis portable --publish never"
   },
   "devDependencies": {
-    "electron": "^37.2.6",
+    "electron": "43.4.1",
     "electron-builder": "^26.0.12"
   },
   "build": {
     "appId": "com.mosaic.browser",
     "productName": "Mosaic",
-    "files": ["src/**/*", "package.json"],
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
     "artifactName": "Mosaic-${version}-${os}-${arch}.${ext}",
-    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.productivity" },
-    "win": { "target": ["nsis", "portable"] }
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
   }
 }
