@@ -3,6 +3,7 @@
 const { app, BrowserWindow, WebContentsView, ipcMain, shell } = require('electron');
 const path = require('node:path');
 const { calculateTiles } = require('./layout');
+const { isAllowedExternalUrl, isBrowsableUrl } = require('./navigation');
 
 const MAX_TILES = 4;
 let window;
@@ -42,7 +43,11 @@ function addTile(url = 'https://www.google.com') {
   activeTile = tiles.length - 1;
   window.contentView.addChildView(tile);
   tile.setBackgroundColor('#f4f4ef');
-  tile.webContents.setWindowOpenHandler(({ url }) => { tile.webContents.loadURL(url); return { action: 'deny' }; });
+  tile.webContents.setWindowOpenHandler(({ url }) => {
+    if (isBrowsableUrl(url)) tile.webContents.loadURL(url);
+    else if (isAllowedExternalUrl(url)) shell.openExternal(url);
+    return { action: 'deny' };
+  });
   for (const event of ['did-start-loading', 'did-stop-loading', 'page-title-updated', 'did-navigate', 'did-navigate-in-page']) {
     tile.webContents.on(event, broadcast);
   }
@@ -51,7 +56,9 @@ function addTile(url = 'https://www.google.com') {
     broadcast();
   });
   tile.webContents.on('will-navigate', (event, destination) => {
-    if (!/^https?:/i.test(destination)) { event.preventDefault(); shell.openExternal(destination); }
+    if (isBrowsableUrl(destination)) return;
+    event.preventDefault();
+    if (isAllowedExternalUrl(destination)) shell.openExternal(destination);
   });
   tile.webContents.loadURL(normalizeUrl(url));
   layoutTiles();
@@ -76,6 +83,14 @@ function createWindow() {
   });
   window.loadFile(path.join(__dirname, 'index.html'));
   window.on('resize', layoutTiles);
+  window.on('closed', () => {
+    for (const tile of tiles) {
+      if (!tile.webContents.isDestroyed()) tile.webContents.close();
+    }
+    tiles = [];
+    activeTile = 0;
+    window = undefined;
+  });
   window.webContents.on('did-finish-load', () => addTile());
 }
 
