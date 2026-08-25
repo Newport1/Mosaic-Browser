@@ -1,1 +1,72 @@
-:root{color-scheme:dark;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;background:transparent;overflow:hidden}body{display:flex;align-items:flex-end;justify-content:flex-end;padding:5px}.grid-actions{display:flex;flex-direction:column;gap:8px}button{display:grid;place-items:center;width:46px;height:46px;border:1px solid #ffffff32;border-radius:15px;background:#171a16e8;color:#f3f5ee;box-shadow:0 8px 28px #0009;backdrop-filter:blur(14px);font:500 24px/1 system-ui;cursor:pointer}button:hover{background:#282d25;border-color:#c8f560aa}button:focus-visible{outline:3px solid #c8f560;outline-offset:2px}.primary{background:#c8f560;color:#151812;border-color:#c8f560;font-size:30px}.primary:hover{background:#d7ff7c}.restore span{width:19px;height:19px;border:2px solid currentColor;border-radius:5px;box-shadow:inset 0 0 0 2px #171a16}.restore:hover span{transform:scale(.86)}[hidden]{display:none!important}@media(prefers-reduced-motion:no-preference){button,.restore span{transition:background-color .14s,border-color .14s,transform .18s}}
+:root {
+  color-scheme: light dark;
+  --surface: rgba(250, 250, 250, 0.92);
+  --hover: #e2e2e2;
+  --text: #171717;
+  --border: rgba(0, 0, 0, 0.18);
+  --focus: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: rgba(31, 31, 31, 0.92);
+    --hover: #393939;
+    --text: #f2f2f2;
+    --border: rgba(255, 255, 255, 0.17);
+    --focus: #ffffff;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(12px);
+  cursor: default;
+}
+
+button:hover { background: var(--hover); }
+
+button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: no-preference) {
+  button { transition: background-color 100ms ease; }
+}

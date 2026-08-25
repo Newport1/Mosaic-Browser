@@ -1,9 +1,10 @@
 'use strict';
 
-const { app, BrowserWindow, WebContentsView, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, WebContentsView, dialog, ipcMain, nativeTheme, shell } = require('electron');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
-const { calculateTiles, calculateViewBounds, workspaceBounds, getToolbarHeight } = require('./layout');
+const { CONFIRM_CLOSE_RESPONSE, createClosePrompt } = require('./close-prompt');
+const { calculateTiles, calculateViewBounds, workspaceBounds, HIDDEN_BOUNDS } = require('./layout');
 const {
   isAllowedExternalUrl,
   isBrowsableUrl,
@@ -11,9 +12,7 @@ const {
   normalizeInput
 } = require('./navigation');
 
-const CONTROL_WIDTH = 60;
-const GRID_CONTROL_HEIGHT = 118;
-const FOCUS_CONTROL_HEIGHT = 60;
+const CONTROL_VIEW_SIZE = 50;
 const ANIMATION_DURATION = 210;
 const NEW_PAGE_URL = pathToFileURL(path.join(__dirname, 'new-page.html')).toString();
 
@@ -25,6 +24,16 @@ let focusedTile = null;
 let reducedMotion = false;
 let transitioning = false;
 let animationToken = 0;
+
+function browserBackground() {
+  return nativeTheme.shouldUseDarkColors ? '#111111' : '#e7e7e7';
+}
+
+function updateThemeBackgrounds() {
+  const color = browserBackground();
+  browserWindow?.setBackgroundColor(color);
+  tiles.forEach(tile => tile.setBackgroundColor(color));
+}
 
 function navigationState(webContents) {
   try {
@@ -42,7 +51,7 @@ function tileState(tile, index) {
   const url = webContents.getURL();
   return {
     index,
-    title: url === NEW_PAGE_URL ? 'New page' : webContents.getTitle() || 'Untitled page',
+    title: url === NEW_PAGE_URL ? 'New tab' : webContents.getTitle() || 'Untitled page',
     url: url === NEW_PAGE_URL ? '' : url,
     loading: webContents.isLoading(),
     ...navigationState(webContents)
@@ -78,13 +87,18 @@ function broadcast() {
 
 function positionControls() {
   if (!browserWindow || !controlsView) return;
+
+  if (focusedTile === null || transitioning) {
+    controlsView.setBounds(HIDDEN_BOUNDS);
+    return;
+  }
+
   const bounds = browserWindow.getContentBounds();
-  const height = focusedTile === null ? GRID_CONTROL_HEIGHT : FOCUS_CONTROL_HEIGHT;
   controlsView.setBounds({
-    x: Math.max(0, bounds.width - CONTROL_WIDTH - 8),
-    y: Math.max(getToolbarHeight(bounds.width), bounds.height - height - 8),
-    width: CONTROL_WIDTH,
-    height
+    x: Math.max(0, bounds.width - CONTROL_VIEW_SIZE - 8),
+    y: Math.max(0, bounds.height - CONTROL_VIEW_SIZE - 8),
+    width: CONTROL_VIEW_SIZE,
+    height: CONTROL_VIEW_SIZE
   });
 }
 
@@ -282,7 +296,7 @@ function addTile(url) {
   tiles.push(tile);
   activeTile = tiles.length - 1;
   browserWindow.contentView.addChildView(tile);
-  tile.setBackgroundColor('#151713');
+  tile.setBackgroundColor(browserBackground());
   attachTileEvents(tile);
   loadUserInput(tile, typeof url === 'string' ? url : '');
   settleLayout();
@@ -290,6 +304,12 @@ function addTile(url) {
 
 function removeTile(index) {
   if (!Number.isInteger(index) || !tiles[index] || !browserWindow) return;
+
+  if (tiles.length === 1) {
+    browserWindow.close();
+    return;
+  }
+
   animationToken += 1;
   transitioning = false;
 
@@ -305,6 +325,21 @@ function removeTile(index) {
 
 function activeWebContents() {
   return tiles[activeTile]?.webContents;
+}
+
+async function confirmCloseAll() {
+  const owner = browserWindow;
+  if (!owner || owner.isDestroyed() || tiles.length === 0) return false;
+
+  const result = await dialog.showMessageBox(owner, createClosePrompt(tiles.length));
+  if (result.response !== CONFIRM_CLOSE_RESPONSE || owner.isDestroyed()) return false;
+
+  owner.close();
+  return true;
+}
+
+function isTrustedActionSender(sender) {
+  return sender === browserWindow?.webContents || sender === controlsView?.webContents;
 }
 
 function createControlsView() {
@@ -333,8 +368,8 @@ function createWindow() {
     show: false,
     fullscreen: !windowed,
     title: 'Mosaic',
-    backgroundColor: '#11130f',
-    titleBarStyle: 'hiddenInset',
+    backgroundColor: browserBackground(),
+    titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'hidden',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -374,11 +409,14 @@ ipcMain.on('tile:activate', event => {
   focusTile(index);
 });
 
-ipcMain.handle('tiles:action', (_event, action, payload) => {
+ipcMain.handle('tiles:action', async (event, action, payload) => {
+  if (!isTrustedActionSender(event.sender)) throw new Error('Untrusted browser action sender');
+
   const webContents = activeWebContents();
 
   if (action === 'add') addTile(typeof payload === 'string' ? payload : undefined);
   else if (action === 'close') removeTile(Number.isInteger(payload) ? payload : activeTile);
+  else if (action === 'close-all') return { closed: await confirmCloseAll() };
   else if (action === 'restore') restoreGrid();
   else if (action === 'toggle-fullscreen' && browserWindow) browserWindow.setFullScreen(!browserWindow.isFullScreen());
   else if (action === 'set-reduced-motion') reducedMotion = Boolean(payload);
@@ -386,12 +424,19 @@ ipcMain.handle('tiles:action', (_event, action, payload) => {
   else if (action === 'back' && webContents?.navigationHistory.canGoBack()) webContents.navigationHistory.goBack();
   else if (action === 'forward' && webContents?.navigationHistory.canGoForward()) webContents.navigationHistory.goForward();
   else if (action === 'reload' && webContents) webContents.reload();
+  else if (action === 'stop' && webContents) webContents.stop();
 
-  broadcast();
-  return currentState();
+  if (browserWindow && !browserWindow.isDestroyed()) {
+    broadcast();
+    return currentState();
+  }
+
+  return { closed: true };
 });
 
 app.whenReady().then(() => {
+  nativeTheme.themeSource = 'system';
+  nativeTheme.on('updated', updateThemeBackgrounds);
   createWindow();
   app.on('activate', () => {
     if (!BrowserWindow.getAllWindows().length) createWindow();

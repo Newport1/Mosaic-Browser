@@ -4,8 +4,13 @@ const address = document.querySelector('#address');
 const back = document.querySelector('#back');
 const forward = document.querySelector('#forward');
 const reload = document.querySelector('#reload');
+const reloadIcon = document.querySelector('#reloadIcon');
+const add = document.querySelector('#add');
 const close = document.querySelector('#close');
+const count = document.querySelector('#count');
 let state = { activeTile: 0, focusedTile: null, tiles: [] };
+
+document.body.classList.add(`platform-${window.mosaic.platform}`);
 
 function action(name, payload) {
   return window.mosaic.action(name, payload);
@@ -20,7 +25,15 @@ function render(next) {
   forward.disabled = !active?.canGoForward;
   reload.disabled = !active;
   close.disabled = !active;
-  document.querySelector('#count').textContent = `${next.tiles.length} ${next.tiles.length === 1 ? 'page' : 'pages'}`;
+  reload.dataset.loading = String(Boolean(active?.loading));
+  reloadIcon.setAttribute('href', active?.loading ? 'icons.svg#x' : 'icons.svg#rotate-cw');
+  reload.setAttribute('aria-label', active?.loading ? 'Stop loading' : 'Reload');
+  reload.title = active?.loading ? 'Stop loading' : 'Reload';
+
+  const tabLabel = `${next.tiles.length} ${next.tiles.length === 1 ? 'tab' : 'tabs'} open`;
+  count.textContent = String(next.tiles.length);
+  count.title = tabLabel;
+  count.setAttribute('aria-label', tabLabel);
   document.body.classList.toggle('page-focused', next.focusedTile !== null);
 }
 
@@ -32,8 +45,13 @@ window.mosaic.onAddressFocus(() => {
 
 back.onclick = () => action('back');
 forward.onclick = () => action('forward');
-reload.onclick = () => action('reload');
+reload.onclick = () => action(reload.dataset.loading === 'true' ? 'stop' : 'reload');
+add.onclick = () => action('add');
 close.onclick = () => action('close', state.activeTile);
+close.addEventListener('contextmenu', event => {
+  event.preventDefault();
+  if (state.tiles.length > 0) action('close-all');
+});
 document.querySelector('#addressForm').onsubmit = event => {
   event.preventDefault();
   action('navigate', address.value);
