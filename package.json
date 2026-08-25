@@ -1,13 +1,13 @@
 {
   "name": "mosaic-browser",
   "version": "0.1.0",
-  "description": "A tiny, keyboard-friendly tiled browser for focused work.",
+  "description": "A fullscreen tiled browser where every page stays visible without tabs.",
   "main": "src/main.js",
   "type": "commonjs",
   "scripts": {
     "start": "electron .",
     "test": "node --test",
-    "check": "node --check src/main.js && node --check src/preload.js && node --check src/renderer.js",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/tile-preload.js && node --check src/renderer.js && node --check src/controls.js && node --check src/layout.js && node --check src/navigation.js",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "dist:mac": "electron-builder --mac dmg zip --publish never",
