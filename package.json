@@ -4,6 +4,7 @@
   "description": "A fullscreen tiled browser where every page stays visible without tabs.",
   "main": "src/main.js",
   "type": "commonjs",
+  "license": "GPL-3.0-only",
   "scripts": {
     "start": "electron .",
     "start:windowed": "electron . --windowed",
