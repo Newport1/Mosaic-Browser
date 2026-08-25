@@ -50,3 +50,9 @@ xvfb-run -a npm start
 Ubuntu 24.04 minimal images may name the audio package `libasound2t64` instead of `libasound2`.
 
 The UI uses plain HTML, CSS, and JavaScript. Each website runs in an isolated, sandboxed Electron `WebContentsView`; no framework or runtime service is required.
+
+## License and project origin
+
+Mosaic is licensed under the **GNU General Public License v3.0 only (GPL-3.0-only)**. You may use, modify, and redistribute Mosaic under those terms. A distributed work based on Mosaic must remain GPL-licensed and make its corresponding source available as required by the license.
+
+Mosaic's defining interaction model is **tile-first browsing**: the live tiled grid is the primary browsing surface, while fullscreen is a temporary secondary view of a selected tile. This repository is the origin of this Mosaic implementation and its documented interaction model. When redistributing Mosaic or a derivative, preserve the project's copyright and license notices and credit `Newport1/Mosaic-Browser` as the source of the implementation.
