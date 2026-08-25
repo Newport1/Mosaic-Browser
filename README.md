@@ -17,6 +17,12 @@ npm install
 npm start
 ```
 
+The app starts in operating-system fullscreen. For development in a normal window:
+
+```bash
+npm run start:windowed
+```
+
 ## Verify
 
 ```bash

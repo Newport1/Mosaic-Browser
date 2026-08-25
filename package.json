@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "electron .",
+    "start:windowed": "electron . --windowed",
     "test": "node --test",
     "check": "node --check src/main.js && node --check src/preload.js && node --check src/tile-preload.js && node --check src/renderer.js && node --check src/controls.js && node --check src/layout.js && node --check src/navigation.js",
     "pack": "electron-builder --dir",

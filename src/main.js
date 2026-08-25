@@ -324,12 +324,14 @@ function createControlsView() {
 }
 
 function createWindow() {
+  const windowed = process.argv.includes('--windowed');
   browserWindow = new BrowserWindow({
     width: 1440,
     height: 920,
     minWidth: 420,
     minHeight: 300,
     show: false,
+    fullscreen: !windowed,
     title: 'Mosaic',
     backgroundColor: '#11130f',
     titleBarStyle: 'hiddenInset',
@@ -346,7 +348,7 @@ function createWindow() {
   browserWindow.on('enter-full-screen', broadcast);
   browserWindow.on('leave-full-screen', broadcast);
   browserWindow.once('ready-to-show', () => {
-    browserWindow.maximize();
+    if (windowed) browserWindow.maximize();
     browserWindow.show();
   });
   browserWindow.webContents.on('did-finish-load', () => {
