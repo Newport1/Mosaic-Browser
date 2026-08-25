@@ -12,6 +12,7 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "dist:mac": "electron-builder --mac dmg zip --publish never",
+    "dist:mac:ci": "electron-builder --mac dmg zip --publish never --config.mac.identity=-",
     "dist:win": "electron-builder --win nsis portable --publish never"
   },
   "devDependencies": {
@@ -31,7 +32,11 @@
         "dmg",
         "zip"
       ],
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "darkModeSupport": true,
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.inherit.plist"
     },
     "win": {
       "target": [
