@@ -1,6 +1,14 @@
 # Mosaic
 
-Mosaic is an intentionally small tiled desktop browser. Open one to four live web pages, switch focus from the compact tab strip, and keep related work visible without juggling windows.
+Mosaic is a fullscreen tiled desktop browser. It has no tab strip and no artificial page limit: every new page becomes another live tile and the entire grid reflows to keep all pages visible.
+
+## Interaction model
+
+- Click a tile to expand it over the workspace.
+- Use the rounded-square control in the bottom-right corner, or press **Esc**, to return the page to its exact grid position.
+- Use the floating **+** control or **Cmd/Ctrl+T** to add another page. Links that request a new window also become new tiles.
+- Use **Cmd/Ctrl+W** to close the active page and **Cmd/Ctrl+L** to focus its address bar.
+- Use the floating fullscreen control or **F11** to toggle operating-system fullscreen.
 
 ## Run locally
 
@@ -9,7 +17,18 @@ npm install
 npm start
 ```
 
-Use **Cmd/Ctrl+T** to add a tile, **Cmd/Ctrl+W** to close the active tile, and **Cmd/Ctrl+L** to focus the address bar.
+The app starts in operating-system fullscreen. For development in a normal window:
+
+```bash
+npm run start:windowed
+```
+
+## Verify
+
+```bash
+npm test
+npm run check
+```
 
 ## Package
 
@@ -19,7 +38,7 @@ Every push and pull request runs the tests and then builds both platforms in Git
 
 ### Linux development libraries
 
-The packaged applications include their runtime requirements on macOS and Windows; users do not install extra libraries. To run Electron in an Ubuntu/Debian development container, install its graphical dependencies and a virtual display:
+The packaged applications include their runtime requirements on macOS and Windows. To run Electron in an Ubuntu/Debian development container, install its graphical dependencies and a virtual display:
 
 ```bash
 sudo apt-get update
