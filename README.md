@@ -1,6 +1,18 @@
 # Mosaic
 
-Mosaic is an intentionally small tiled desktop browser. Open one to four live web pages, switch focus from the compact tab strip, and keep related work visible without juggling windows.
+Mosaic is a fullscreen tiled desktop browser. It deliberately has no tab strip: every open page is visible as a tile, and adding another page reflows the entire workspace.
+
+## Interaction model
+
+- There is no four-page or other application-level tile limit.
+- **Cmd/Ctrl+T**, the bottom-right `+` button, and links that request a new window create another tile.
+- Click a page in the grid to bring it fullscreen.
+- Use the bottom-right rounded-square button or **Escape** to return it to the grid.
+- **Cmd/Ctrl+L** focuses the active page address bar.
+- **Cmd/Ctrl+W** closes the active page.
+- **Cmd/Ctrl+R** reloads the active page.
+
+The app opens fullscreen by default. For development, use the windowed command below.
 
 ## Run locally
 
@@ -9,7 +21,18 @@ npm install
 npm start
 ```
 
-Use **Cmd/Ctrl+T** to add a tile, **Cmd/Ctrl+W** to close the active tile, and **Cmd/Ctrl+L** to focus the address bar.
+```bash
+npm run start:windowed
+```
+
+## Verify
+
+```bash
+npm test
+npm run check
+```
+
+Regression coverage exercises 5, 12, 32, and 64-tile layouts so the former four-tile cap cannot return unnoticed.
 
 ## Package
 
@@ -19,7 +42,7 @@ Every push and pull request runs the tests and then builds both platforms in Git
 
 ### Linux development libraries
 
-The packaged applications include their runtime requirements on macOS and Windows; users do not install extra libraries. To run Electron in an Ubuntu/Debian development container, install its graphical dependencies and a virtual display:
+The packaged applications include their runtime requirements on macOS and Windows. To run Electron in an Ubuntu/Debian development container, install its graphical dependencies and a virtual display:
 
 ```bash
 sudo apt-get update
@@ -30,4 +53,8 @@ xvfb-run -a npm start
 
 Ubuntu 24.04 minimal images may name the audio package `libasound2t64` instead of `libasound2`.
 
-The UI uses plain HTML, CSS, and JavaScript. Each website runs in an isolated, sandboxed Electron `WebContentsView`; no framework or runtime service is required.
+## Architecture
+
+Each page runs in an isolated, sandboxed Electron `WebContentsView`. Each tile also has a transparent chrome view for its address bar and overview click target. A separate topmost control view keeps the bottom-right new-page/restore control usable above real webpages.
+
+`src/layout.js` calculates a dense responsive grid for any page count. `src/main.js` owns page lifecycle, popup interception, focus/restore animation, native view bounds, and keyboard shortcuts.
