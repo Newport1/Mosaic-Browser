@@ -14,15 +14,15 @@ Mosaic is a fullscreen tiled desktop browser. It has no tab strip and no artific
 
 Prebuilt macOS and Windows installers are attached to every successful [Build desktop installers](https://github.com/Newport1/Mosaic-Browser/actions/workflows/build-desktop.yml) run. GitHub requires you to be signed in to download Actions artifacts.
 
-The latest installers from `main` are on this successful run:
+Grab the installers from the latest successful `main` build:
 
-**[Download Mosaic installers](https://github.com/Newport1/Mosaic-Browser/actions/runs/32814992206)**
+**[Download Mosaic installers (latest main build)](https://github.com/Newport1/Mosaic-Browser/actions/workflows/build-desktop.yml?query=branch%3Amain)**
 
 | Platform | Artifact | Contents |
 | --- | --- | --- |
-| macOS (Apple Silicon) | [Mosaic-macOS-Apple-Silicon-DMG](https://github.com/Newport1/Mosaic-Browser/actions/runs/32814992206/artifacts/9551104021) | Disk image (`.dmg`) |
-| macOS (Apple Silicon) | [Mosaic-macOS-Apple-Silicon-App](https://github.com/Newport1/Mosaic-Browser/actions/runs/32814992206/artifacts/9551105474) | Zipped `.app` |
-| Windows | [Mosaic-Windows](https://github.com/Newport1/Mosaic-Browser/actions/runs/32814992206/artifacts/9551112986) | NSIS installer and portable `.exe` |
+| macOS (Apple Silicon) | `Mosaic-macOS-Apple-Silicon-DMG` | Disk image (`.dmg`) |
+| macOS (Apple Silicon) | `Mosaic-macOS-Apple-Silicon-App` | Zipped `.app` |
+| Windows | `Mosaic-Windows` | NSIS installer and portable `.exe` |
 
 Artifacts expire after 14 days. To mint a fresh build, open **Actions → Build desktop installers → Run workflow**.
 
